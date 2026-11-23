@@ -189,109 +189,110 @@ function initializeMessage() {
     }, 300);
 }
 
+const MESSAGE_TEXT = `haloo ara a nya 16 kali, kata ade kamu.
+
+selamat hbd yg keberapa gatau dah.
+
+[foto:./images/ara.jpeg]
+
+kadang aku masih suka mikir, lucu juga ya, kita bisa kenal dari game rosblok. awalnya cuma sama-sama main, ketemu di server random, ngobrol sekadarnya. malah jadi temen beneran (kita temenan kan?). ga semua orang yg ketemu di dunia maya bisa jadi temen.
+
+di umur yg baru ini, aku doain kamu supaya diberi kesehatan yg baik fisik maupun mental, semoga bisa dikasih pekerjaan yg lebih baik, gaji 20juta sebulan, lingkungan baik dan atasan yg baik, semoga cepet dapet pasangan, jangan lupa undang yak biar aku bisa ngerasain kondangan di nikahan temen aku.
+
+semoga kamu selalu dikelilingi orang-orang yg baik, yg ada buat kamu bukan cuma pas lagi seneng doang, tapi juga pas lagi capek. dan semoga rezeki kamu lancar, tabungan aman, dan kamu bisa beli hal-hal yg kamu pengenin tanpa harus mikir dua kali.
+
+terakhir, semoga kamu tetap jadi diri kamu sendiri: apa adanya, nyebelin, tukang rusuh, sering matiin streak tiktok.
+
+sekali lagi, selamat ulang tahun ara a nya 16 kali, semoga tahun ini jadi tahun yg paling baik buat kamu.`;
+
+let msgSegs = [];
+
+function buildMessage(container) {
+    container.innerHTML = '';
+    msgSegs = [];
+    MESSAGE_TEXT.split(/(\[foto:[^\]]*\])/).forEach(part => {
+        if (!part) return;
+        const m = part.match(/^\[foto:([^|\]]*)(?:\|([^\]]*))?\]$/);
+        if (m) {
+            const src = m[1].trim();
+            const caption = (m[2] || '').trim();
+
+            const fig = document.createElement('figure');
+            fig.className = 'msg-photo';
+            fig.style.display = 'none';
+
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = caption || 'foto';
+            img.addEventListener('load', () => { container.scrollTop = container.scrollHeight; });
+            img.addEventListener('error', () => {
+                const fb = document.createElement('div');
+                fb.className = 'msg-photo-fallback';
+                fb.textContent = '📷';
+                img.replaceWith(fb);
+            });
+            fig.appendChild(img);
+
+            if (caption) {
+                const cap = document.createElement('figcaption');
+                cap.textContent = caption;
+                fig.appendChild(cap);
+            }
+
+            container.appendChild(fig);
+            msgSegs.push({ photo: true, el: fig });
+        } else {
+            const span = document.createElement('span');
+            span.style.whiteSpace = 'pre-wrap';
+            container.appendChild(span);
+            msgSegs.push({ photo: false, el: span, text: part });
+        }
+    });
+}
+
 function startTypewriter() {
     const messageContent = document.querySelector('.message-content');
     if (!messageContent) return;
-    
-    const fullMessage = `haloo ara a nya 16 kali, kata ade kamu.
-
-    selamat hbd yg keberapa gatau dah.
-
-    [[foto:./images/ara.jpeg]]
-
-    kadang aku masih suka mikir, lucu juga ya, kita bisa kenal dari game rosblok. awalnya cuma sama-sama main, ketemu di server random, ngobrol sekadarnya. malah jadi temen beneran (kita temenan kan?). ga semua orang yg ketemu di dunia maya bisa jadi temen.
-
-    di umur yg baru ini, aku doain kamu supaya diberi kesehatan yg baik fisik maupun mental, semoga bisa dikasih pekerjaan yg lebih baik, gaji 20juta sebulan, lingkungan baik dan atasan yg baik, semoga cepet dapet pasangan, jangan lupa undang yak biar aku bisa ngerasain kondangan di nikahan temen aku.
-
-    semoga kamu selalu dikelilingi orang-orang yg baik, yg ada buat kamu bukan cuma pas lagi seneng doang, tapi juga pas lagi capek. dan semoga rezeki kamu lancar, tabungan aman, dan kamu bisa beli hal-hal yg kamu pengenin tanpa harus mikir dua kali.
-
-    terakhir, semoga kamu tetap jadi diri kamu sendiri: apa adanya, nyebelin, tukang rusuh, sering matiin streak tiktok.
-
-    sekali lagi, selamat ulang tahun ara a nya 16 kali, semoga tahun ini jadi tahun yg paling baik buat kamu.`;
-
-    messageContent.innerHTML = '';
-    let charIndex = 0;
-    isTyping = true;
-    
-    if (typewriterInterval) {
-        clearInterval(typewriterInterval);
-    }
-
-    function photoHTML(src, caption) {
-    return `<figure class="msg-photo">
-        <img src="${src}" alt="${caption}"
-             onload="this.closest('.message-content').scrollTop = this.closest('.message-content').scrollHeight"
-             onerror="this.replaceWith(Object.assign(document.createElement('div'), {className:'msg-photo-fallback', textContent:'📷'}))">
-        <figcaption>${caption}</figcaption>
-    </figure>`;
-    }
-    
-    function parseMessage(text) {
-    const items = [];
-    text.split(/(\[\[foto:.*?\]\])/).forEach(part => {
-        const m = part.match(/^\[\[foto:(.*?)\|(.*?)\]\]$/);
-        if (m) items.push({ photo: true, src: m[1], caption: m[2] });
-        else for (const ch of part) items.push(ch);
-    });
-    return items;
-    }
-    
-    function itemToHTML(it) {
-    if (typeof it === 'object') return photoHTML(it.src, it.caption);
-    return it === '\n' ? '<br>' : it;
-    }
-
-    function startTypewriter() {
-    const messageContent = document.querySelector('.message-content');
-    if (!messageContent) return;
-
-    const items = parseMessage(MESSAGE_TEXT);
-    messageContent.innerHTML = '';
-    let idx = 0;
-    isTyping = true;
 
     if (typewriterInterval) clearInterval(typewriterInterval);
+    buildMessage(messageContent);
+
+    let seg = 0, pos = 0;
+    isTyping = true;
 
     typewriterInterval = setInterval(() => {
-        if (idx < items.length) {
-            messageContent.insertAdjacentHTML('beforeend', itemToHTML(items[idx]));
-            idx++;
-            messageContent.scrollTop = messageContent.scrollHeight;
-        } else {
+        if (seg >= msgSegs.length) {
             clearInterval(typewriterInterval);
+            typewriterInterval = null;
             isTyping = false;
+            return;
         }
-    }, 50);
-    }
-
-
-    typewriterInterval = setInterval(() => {
-        if (charIndex < fullMessage.length) {
-            const char = fullMessage[charIndex];
-            if (char === '\n') {
-                messageContent.innerHTML += '<br>';
-            } else {
-                messageContent.innerHTML += char;
-            }
-            charIndex++;
-            messageContent.scrollTop = messageContent.scrollHeight;
+        const s = msgSegs[seg];
+        if (s.photo) {
+            s.el.style.display = '';
+            seg++;
         } else {
-            clearInterval(typewriterInterval);
-            isTyping = false;
+            pos++;
+            s.el.textContent = s.text.slice(0, pos);
+            if (pos >= s.text.length) { seg++; pos = 0; }
         }
+        messageContent.scrollTop = messageContent.scrollHeight;
     }, 50);
 }
 
 function skipTypewriter() {
-    if (isTyping && typewriterInterval) {
+    if (!isTyping) return;
+    if (typewriterInterval) {
         clearInterval(typewriterInterval);
-        const messageContent = document.querySelector('.message-content');
-        if (messageContent) {
-            messageContent.innerHTML = parseMessage(MESSAGE_TEXT).map(itemToHTML).join('');
-            isTyping = false;
-            messageContent.scrollTop = messageContent.scrollHeight;
-        }
+        typewriterInterval = null;
     }
+    msgSegs.forEach(s => {
+        if (s.photo) s.el.style.display = '';
+        else s.el.textContent = s.text;
+    });
+    isTyping = false;
+    const messageContent = document.querySelector('.message-content');
+    if (messageContent) messageContent.scrollTop = messageContent.scrollHeight;
 }
 
 function initializeGallery() {
