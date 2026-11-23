@@ -197,6 +197,8 @@ function startTypewriter() {
 
     selamat hbd yg keberapa gatau dah.
 
+    [[foto:./images/msg1.jpg|awal kenal 🎮]]
+
     kadang aku masih suka mikir, lucu juga ya, kita bisa kenal dari game rosblok. awalnya cuma sama-sama main, ketemu di server random, ngobrol sekadarnya. malah jadi temen beneran (kita temenan kan?). ga semua orang yg ketemu di dunia maya bisa jadi temen.
 
     di umur yg baru ini, aku doain kamu supaya diberi kesehatan yg baik fisik maupun mental, semoga bisa dikasih pekerjaan yg lebih baik, gaji 20juta sebulan, lingkungan baik dan atasan yg baik, semoga cepet dapet pasangan, jangan lupa undang yak biar aku bisa ngerasain kondangan di nikahan temen aku.
@@ -214,7 +216,55 @@ function startTypewriter() {
     if (typewriterInterval) {
         clearInterval(typewriterInterval);
     }
+
+    function photoHTML(src, caption) {
+    return `<figure class="msg-photo">
+        <img src="${src}" alt="${caption}"
+             onload="this.closest('.message-content').scrollTop = this.closest('.message-content').scrollHeight"
+             onerror="this.replaceWith(Object.assign(document.createElement('div'), {className:'msg-photo-fallback', textContent:'📷'}))">
+        <figcaption>${caption}</figcaption>
+    </figure>`;
+    }
     
+    function parseMessage(text) {
+    const items = [];
+    text.split(/(\[\[foto:.*?\]\])/).forEach(part => {
+        const m = part.match(/^\[\[foto:(.*?)\|(.*?)\]\]$/);
+        if (m) items.push({ photo: true, src: m[1], caption: m[2] });
+        else for (const ch of part) items.push(ch);
+    });
+    return items;
+    }
+    
+    function itemToHTML(it) {
+    if (typeof it === 'object') return photoHTML(it.src, it.caption);
+    return it === '\n' ? '<br>' : it;
+    }
+
+    function startTypewriter() {
+    const messageContent = document.querySelector('.message-content');
+    if (!messageContent) return;
+
+    const items = parseMessage(MESSAGE_TEXT);
+    messageContent.innerHTML = '';
+    let idx = 0;
+    isTyping = true;
+
+    if (typewriterInterval) clearInterval(typewriterInterval);
+
+    typewriterInterval = setInterval(() => {
+        if (idx < items.length) {
+            messageContent.insertAdjacentHTML('beforeend', itemToHTML(items[idx]));
+            idx++;
+            messageContent.scrollTop = messageContent.scrollHeight;
+        } else {
+            clearInterval(typewriterInterval);
+            isTyping = false;
+        }
+    }, 50);
+    }
+
+
     typewriterInterval = setInterval(() => {
         if (charIndex < fullMessage.length) {
             const char = fullMessage[charIndex];
@@ -237,8 +287,7 @@ function skipTypewriter() {
         clearInterval(typewriterInterval);
         const messageContent = document.querySelector('.message-content');
         if (messageContent) {
-            const fullMessage = `haloo ara a nya 16 kali, kata ade kamu.<br><br>selamat hbd yg keberapa gatau dah.<br><br>kadang aku masih suka mikir, lucu juga ya, kita bisa kenal dari game rosblok. awalnya cuma sama-sama main, ketemu di server random, ngobrol sekadarnya. malah jadi temen beneran (kita temenan kan?). ga semua orang yg ketemu di dunia maya bisa jadi temen.<br><br>di umur yg baru ini, aku doain kamu supaya diberi kesehatan yg baik fisik maupun mental, semoga bisa dikasih pekerjaan yg lebih baik, gaji 20juta sebulan, lingkungan baik dan atasan yg baik, semoga cepet dapet pasangan, jangan lupa undang yak biar aku bisa ngerasain kondangan di nikahan temen aku.<br><br>semoga kamu selalu dikelilingi orang-orang yg baik, yg ada buat kamu bukan cuma pas lagi seneng doang, tapi juga pas lagi capek. dan semoga rezeki kamu lancar, tabungan aman, dan kamu bisa beli hal-hal yg kamu pengenin tanpa harus mikir dua kali.<br><br>terakhir, semoga kamu tetap jadi diri kamu sendiri: apa adanya, nyebelin, tukang rusuh, sering matiin streak tiktok.<br><br>sekali lagi, selamat ulang tahun ara a nya 16 kali, semoga tahun ini jadi tahun yg paling baik buat kamu.`;
-            messageContent.innerHTML = fullMessage;
+            messageContent.innerHTML = parseMessage(MESSAGE_TEXT).map(itemToHTML).join('');
             isTyping = false;
             messageContent.scrollTop = messageContent.scrollHeight;
         }
