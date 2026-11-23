@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Gift</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="camera.css">
+</head>
+<body>
+    <div id="gameboy-container">
+        <!-- Main Screen -->
+        <div id="main-screen" class="screen active">
+            <div class="gameboy-body off">
+                <div class="gameboy-header">
+                    <div class="power-indicator">
+                        <span class="power-dot"></span>
+                        <span class="power-text">POWER</span>
+                    </div>
+                    <div class="brand-text">GAME-BOY</div>
+                </div>
+
+                <div class="gameboy-screen">
+                    <div class="screen-content">
+                        <h1 class="birthday-title">Happy Birthday!</h1>
+                        <div class="start-text">Press Start Button</div>
+                        <div class="screen-info">
+                            <span class="dot-matrix">DOT MATRIX WITH STEREO SOUND</span>
+                            <span class="battery">
+                                <span class="battery-dot"></span>
+                                BATTERY
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-buttons">
+                    <button class="menu-btn message-btn" data-page="message">MESSAGE</button>
+                    <button class="menu-btn camera-btn" data-page="camera">CAMERA</button>
+                    <button class="menu-btn results-btn" data-page="results">GALLERY</button>
+                    <button class="menu-btn cake-btn" data-page="cake">BIRTHDAY CAKE</button>
+                </div>
+
+                <div class="controls">
+                    <div class="dpad">
+                        <div class="dpad-center">
+                            <div class="dpad-up">↑</div>
+                            <div class="dpad-left">←</div>
+                            <div class="dpad-right">→</div>
+                            <div class="dpad-down">↓</div>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn b-btn">B</button>
+                        <button class="action-btn a-btn">A</button>
+                    </div>
+                </div>
+
+                <div class="bottom-controls">
+                    <button class="control-btn power-btn" title="Power">POWER</button>
+                    <button class="control-btn start-btn">START</button>
+                </div>
+
+                <div class="speaker-grille"></div>
+            </div>
+        </div>
+
+        <div id="message-screen" class="screen">
+            <div class="page-container">
+                <div class="page-screen">
+                </div>
+                <div class="page-controls">
+                    <button class="page-btn back-btn" data-page="main">BACK</button>
+                    <button class="page-btn continue-btn">NEXT</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="camera-screen" class="screen">
+            <div class="page-container">
+                <div class="page-screen">
+                    <div class="page-header">Camera</div>
+                    <div class="cam-body">
+                        <div class="cam-view">
+                            <video id="cam-video" autoplay playsinline muted></video>
+                            <div id="cam-count"></div>
+                            <div id="cam-flash"></div>
+                        </div>
+                        <div id="cam-status">Menyalakan kamera...</div>
+                        <div class="cam-thumbs" id="cam-thumbs">
+                            <div class="cam-thumb"></div>
+                            <div class="cam-thumb"></div>
+                            <div class="cam-thumb"></div>
+                            <div class="cam-thumb"></div>
+                        </div>
+                        <div class="cam-actions">
+                            <button class="cz-btn" id="cam-auto" disabled>AUTO 4 FOTO</button>
+                            <button class="cz-btn red" id="cam-shot" disabled>TAKE PHOTO</button>
+                            <button class="cz-btn gray" id="cam-reset">ULANG</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-controls">
+                    <button class="page-btn back-btn" data-page="main">KEMBALI</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="customize-screen" class="screen">
+            <div class="page-container">
+                <div class="page-screen">
+                    <div class="page-header">Customize Strip</div>
+                    <div class="cz-body">
+                        <div class="cz-row">
+                            <canvas id="cz-canvas"></canvas>
+                            <div class="cz-opts">
+                                <label>FRAME</label>
+                                <div class="cz-swatches" id="cz-frames"></div>
+                                <label>FILTER</label>
+                                <div class="cz-filters" id="cz-filters"></div>
+                                <label>TEKS</label>
+                                <input type="text" id="cz-text" maxlength="22">
+                                <label class="cz-check"><input type="checkbox" id="cz-date" checked> TAMPILKAN TANGGAL</label>
+                                <button class="cz-btn pink" id="cz-stickers">🎀 ADD STICKER</button>
+                            </div>
+                        </div>
+                        <div class="cz-actions">
+                            <button class="cz-btn" id="cz-download">DOWNLOAD</button>
+                            <button class="cz-btn ig" id="cz-story">SHARE</button>
+                            <button class="cz-btn" id="cz-save">SAVE</button>
+                            <button class="cz-btn gray" id="cz-retake">RETAKE PHOTO</button>
+                        </div>
+                        <div id="cz-msg"></div>
+                    </div>
+                    <div class="st-editor" id="st-editor">
+                        <div class="st-bar">
+                            <div class="st-pal" id="st-pal"></div>
+                            <div class="st-ctrl">
+                                <button class="cz-btn gray" id="st-small">−</button>
+                                <button class="cz-btn gray" id="st-big">+</button>
+                                <button class="cz-btn red" id="st-del">DELETE</button>
+                                <button class="cz-btn gray" id="st-clear">RESET</button>
+                                <button class="cz-btn" id="st-done">DONE</button>
+                            </div>
+                            <div class="st-hint">Tap stiker untuk memilih, tap strip untuk memindahkan 👆</div>
+                        </div>
+                        <div class="st-stage" id="st-stage"><canvas id="st-canvas"></canvas></div>
+                    </div>
+                </div>
+                <div class="page-controls">
+                    <button class="page-btn back-btn" data-page="camera">BACK</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="results-screen" class="screen">
+            <div class="page-container">
+                <div class="page-screen">
+                    <div class="page-header">RESULT</div>
+                    <div class="res-grid" id="res-grid"></div>
+                </div>
+                <div class="page-controls">
+                    <button class="page-btn back-btn" data-page="main">BACK</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="cake-screen" class="screen">
+            <div class="page-container">
+                <div class="page-screen">
+                    <div class="page-header">BIRTHDAY CAKE</div>
+                    <div class="cake-body">
+                        <div id="cake-stage"></div>
+                        <div id="cake-status"></div>
+                        <div class="cake-meter"><div id="cake-meter-fill"></div></div>
+                        <div class="cake-actions">
+                            <button class="cz-btn red" id="cake-blow">TIUP (TAP)</button>
+                            <button class="cz-btn pink" id="cake-song">MUSIC</button>
+                            <button class="cz-btn gray" id="cake-relight">NYALAKAN LAGI</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-controls">
+                    <button class="page-btn back-btn" data-page="main">BACK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="camera.js"></script>
+</body>
+</html>
