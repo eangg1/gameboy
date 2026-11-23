@@ -197,7 +197,7 @@ function startTypewriter() {
 
     selamat hbd yg keberapa gatau dah.
 
-    [[foto:./images/ara1.jpg]]
+    [[foto:./images/ara.jpeg]]
 
     kadang aku masih suka mikir, lucu juga ya, kita bisa kenal dari game rosblok. awalnya cuma sama-sama main, ketemu di server random, ngobrol sekadarnya. malah jadi temen beneran (kita temenan kan?). ga semua orang yg ketemu di dunia maya bisa jadi temen.
 
