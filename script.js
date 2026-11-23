@@ -193,7 +193,7 @@ const MESSAGE_TEXT = `haloo ara a nya 16 kali, kata ade kamu.
 
 selamat hbd yg keberapa gatau dah.
 
-[foto:./images/ara.jpeg]
+[foto:./image/ara.jpeg]
 
 kadang aku masih suka mikir, lucu juga ya, kita bisa kenal dari game rosblok. awalnya cuma sama-sama main, ketemu di server random, ngobrol sekadarnya. malah jadi temen beneran (kita temenan kan?). ga semua orang yg ketemu di dunia maya bisa jadi temen.
 
